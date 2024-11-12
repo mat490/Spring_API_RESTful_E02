@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      lang="es">
+
+<head th:insert="layout::header">
+
+</head>
+<body>
+
+<nav th:insert="layout::nav"></nav>
+<div class="container mt-5">
+    <div class="default" id="menasaje"></div>
+    <form th:action="@{/front/alumnos/editar}"
+          th:object="${alumno}"
+          method="PUT"
+          class="row"  >
+        <div class="col-6">
+        <label for="matricula" class="form-label">Matricula</label>
+            <input id="matricula" type="text" th:field="*{matricula}">
+        </div>
+
+        <div class="col-6">
+        <label for="nombre" class="form-label">Nombre</label>
+            <input id="nombre" type="text" th:field="*{nombre}">
+        </div>
+
+        <div class="col-6">
+        <label for="paterno" class="form-label">Apellido paterno</label>
+            <input id="paterno" type="text" th:field="*{paterno}">
+        </div>
+
+        <div class="col-6">
+        <label for="fnac" class="form-label">Fecha nacimiento</label>
+            <input id="fnac" type="text" th:field="*{fnac}">
+        </div>
+
+        <div class="col-6">
+        <label for="estatura" class="form-label">Estatura</label>
+            <input id="estatura" type="text" th:field="*{estatura}">
+        </div>
+
+        <div class="col-6">
+        <label for="estado" class="form-label">Estado</label>
+            <input id="estado" type="text" th:field="*{estado}">
+        </div>
+
+        <div class="col-12">
+            <a class="btn btn-primary"
+               onclick="enviarFormulario()"
+                type="submit">
+                Guardar cambios
+            </a>
+        </div>
+
+    </form>
+
+</div>
+<script>
+    function enviarFormulario() {
+        const formData = {
+            matricula: document.getElementById('matricula').value,
+            nombre: document.getElementById('nombre').value,
+            paterno: document.getElementById('paterno').value,
+            fnac: document.getElementById('fnac').value,
+            estatura: parseFloat(document.getElementById('estatura').value),
+            estado: document.getElementById('estado').value
+        };
+
+        fetch('/front/alumnos/editar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            const mensajeDiv = document.getElementById('mensaje');
+            if (response.ok) {
+                mensajeDiv.textContent = "Actualización exitosa :)";
+                mensajeDiv.className = "alert alert-success"; // Clase de éxito de Bootstrap
+                mensajeDiv.style.display = "block";
+            } else {
+                mensajeDiv.textContent = "No se pudo actualizar :(";
+                mensajeDiv.className = "alert alert-danger"; // Clase de error de Bootstrap
+                mensajeDiv.style.display = "block";
+            }
+
+            // Opción para ocultar el mensaje después de un tiempo (opcional)
+            setTimeout(() => {
+
+            }, 3000); // 3 segundos
+        }).catch(error => {
+            console.error('Error:', error);
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = "Error al enviar la solicitud.";
+            mensajeDiv.className = "alert alert-danger";
+            mensajeDiv.style.display = "block";
+        });
+    }
+</script>
+<div th:insert="layout::footer"></div>
+
+</body>
+</html>
